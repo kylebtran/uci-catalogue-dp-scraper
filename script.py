@@ -17,6 +17,8 @@ URLS: list = [
 
 
 def main():
+    os.makedirs("sample_dp_exports", exist_ok=True)
+
     for idx, url in enumerate(URLS):
         try:
             scraper = Scraper(url)
