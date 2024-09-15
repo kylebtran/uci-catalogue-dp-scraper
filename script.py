@@ -1,4 +1,4 @@
-from sample_dp_scrapers import sample_dp_scraper_2020_24
+from sample_dp_scrapers.sample_dp_scraper_2020_24 import Scraper
 
 
 import pandas as pd
@@ -19,7 +19,8 @@ URLS: list = [
 def main():
     for idx, url in enumerate(URLS):
         try:
-            df: pd.DataFrame = sample_dp_scraper_2020_24.scrape(url)
+            scraper = Scraper(url)
+            df: pd.DataFrame = scraper.scrape()
 
             file_name: str = df.iloc[1, 3].split(" ", 1)[1].replace(" ", "_")
             subdir_name: str = f"sample_dp_exports/{df.iloc[1, 2].replace(" ", "_")}"

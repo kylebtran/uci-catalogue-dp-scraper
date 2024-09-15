@@ -1,4 +1,4 @@
 __pycache__/
-sample_dp_exports/*
+sample_dp_exports/
 
 !.gitignore

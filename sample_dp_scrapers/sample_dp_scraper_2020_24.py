@@ -71,10 +71,10 @@ class Scraper:
             course_url = None
 
         else:
-            course_url = next(iter(info.values()))
+            course_url = "https://catalogue.uci.edu" + next(iter(info.values()))
             prefix, number = next(iter(info.keys())).rsplit("\xa0", 1)
 
-            soup = get_soup("https://catalogue.uci.edu" + course_url)
+            soup = get_soup(course_url)
 
             dr = {}
             paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
