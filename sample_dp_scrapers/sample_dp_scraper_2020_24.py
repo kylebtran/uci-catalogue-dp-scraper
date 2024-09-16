@@ -71,7 +71,7 @@ class Scraper:
             course_url = None
 
         else:
-            course_url = "https://catalogue.uci.edu" + next(iter(info.values()))
+            course_url = "/".join(self.url.split("/")[:5]) + next(iter(info.values()))
             prefix, number = next(iter(info.keys())).rsplit("\xa0", 1)
 
             soup = get_soup(course_url)

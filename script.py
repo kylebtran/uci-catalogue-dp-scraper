@@ -38,7 +38,7 @@ def main():
             scraper = Scraper(url)
             df: pd.DataFrame = scraper.scrape()
 
-            file_name: str = df.iloc[1, 3].split(" ", 1)[1].replace(" ", "_")
+            file_name: str = df.iloc[1, 3].split(" ", 1)[1].replace(" ", "_").replace(":", "").replace("/", "")
             subdir_name: str = f"sample_dp_exports/{df.iloc[1, 2].replace(" ", "_")}"
 
             os.makedirs(subdir_name, exist_ok=True)
