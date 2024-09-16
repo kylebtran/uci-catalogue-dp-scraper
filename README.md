@@ -16,3 +16,9 @@ The scraper makes use of **Python**, primarily leveraging:
 - `requests`: To fetch the HTML content from UCI's Catalogue.
 - `BeautifulSoup`: To parse and extract the degree plan tables.
 - `pandas`: To store the scraped data in a structured format (DataFrame) for further analysis or export.
+
+## Procedure
+
+1. Load URLs of UCI degree plans into `urls.txt` from the [UCI Catalogue](https://catalogue.uci.edu).
+2. Run `script.py` and monitor progress through the console.
+3. View scraped degree plans under the `sample_dp_exports/` directory.
