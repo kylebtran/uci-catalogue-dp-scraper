@@ -225,6 +225,6 @@ def format_export(row_header: Header, dfs: list[pd.DataFrame]) -> pd.DataFrame:
         for _, row in df_each.iterrows():
             for cell in row:
                 if isinstance(cell, Course):
-                    rows.append([*row_header, *cell])
+                    rows.append([cell.CourseSequenceID, *row_header[1:], *cell])
 
     return pd.DataFrame(rows, columns=[*Header._fields, *Course._fields])

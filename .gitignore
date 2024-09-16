@@ -1,4 +1,5 @@
 __pycache__/
 sample_dp_exports/
 
+.DS_Store
 !.gitignore

@@ -1,3 +1,4 @@
+from typing import Generator
 from sample_dp_scrapers.sample_dp_scraper_2020_24 import Scraper
 
 
@@ -6,20 +7,33 @@ import os
 
 
 # TODO:
-# Search second layer course results by their h2 course name before reading paragraph details.
+# 1. Search second layer course results by their h2 course name before reading paragraph details.
 
 
-URLS: list = [
-    "https://catalogue.uci.edu/previouseditions/2022-23/thehenrysamuelischoolofengineering/departmentofmechanicalandaerospaceengineering/aerospaceengineering_bs/#sampleprogramtext",
-    "https://catalogue.uci.edu/previouseditions/2023-24/donaldbrenschoolofinformationandcomputersciences/departmentofcomputerscience/computerscience_bs/",
+YEARS = ["2020-21", "2021-22", "2022-23", "2023-24"]
 
-]
+
+def process_urls(file_path: str) -> list:
+    with open(file_path, "r") as f:
+        return [line.strip() for line in f.readlines() if line.startswith("https://catalogue.uci.edu")]
+    
+
+def apply_year_range(urls: list) -> Generator[str, None, None]:
+    global YEARS
+
+    for url in urls:
+        for year in YEARS:
+            yield url.replace(url.split('/')[4], year) 
 
 
 def main():
+    global YEARS
+
+    urls = process_urls("urls.txt")
+
     os.makedirs("sample_dp_exports", exist_ok=True)
 
-    for idx, url in enumerate(URLS):
+    for idx, url in enumerate(apply_year_range(urls)):
         try:
             scraper = Scraper(url)
             df: pd.DataFrame = scraper.scrape()
@@ -34,10 +48,10 @@ def main():
                 index=False,
             )
 
-            print(f"({idx + 1}/{len(URLS)}) Success")
+            print(f"({idx + 1}/{len(urls * len(YEARS))}) Success")
 
         except Exception as e:
-            print(f"({idx + 1}/{len(URLS)}) Failure ({url}: {e})")
+            print(f"({idx + 1}/{len(urls * len(YEARS))}) Failure ({url}: {e})")
 
 
 if __name__ == "__main__":
