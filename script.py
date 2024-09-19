@@ -1,5 +1,5 @@
-from typing import Generator
 from sample_dp_scrapers.sample_dp_scraper_2020_24 import Scraper
+from typing import Generator
 
 
 import pandas as pd

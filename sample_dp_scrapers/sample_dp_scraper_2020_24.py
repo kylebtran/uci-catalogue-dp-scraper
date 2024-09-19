@@ -4,39 +4,10 @@ from bs4 import BeautifulSoup
 
 import pandas as pd
 import datetime
-import requests
 
 
-YEAR_STANDINGS: list = ["Freshman", "Sophomore", "Junior", "Senior"]
-TERMS: list = ["Fall", "Winter", "Spring", "Summer"]
-
-
-class Header(NamedTuple):
-    DegreePlanID: str
-    Institution: str
-    AcademicYear: str
-    Curriculum: str
-    DegreePlan: str
-    DegreeType: str
-    SystemType: str
-    CIP: str
-
-
-class Course(NamedTuple):
-    CourseSequenceID: str
-    CourseName: str
-    Prefix: str
-    Number: str
-    Prerequisites: Optional[str]
-    Corequisites: Optional[str]
-    Strict_Corequisites: Optional[str]
-    CreditHours: str
-    CanonicalName: Optional[str]
-    TermNumber: str
-    Course_URL: Optional[str]
-    Plan_URL: str
-    Notes: Optional[str]
-    ExtractDate: datetime.datetime
+from sample_dp_scrapers.types import Header, Course, YEAR_STANDINGS, TERMS
+from sample_dp_scrapers.utils import get_soup
 
 
 class Scraper:
@@ -47,7 +18,6 @@ class Scraper:
         self.course_id_map = {}
 
     def get_class_info(self, info: Optional[str | dict], curr_url: str) -> list:
-
         if not info:
             return None
 
@@ -152,11 +122,6 @@ class Scraper:
         ]
 
         return format_export(row_header, dfs).sort_values(by="CourseSequenceID")
-
-
-def get_soup(url: str) -> BeautifulSoup:
-    response: requests.Response = requests.get(url)
-    return BeautifulSoup(response.text, "html.parser")
 
 
 def get_df(soup: BeautifulSoup) -> pd.DataFrame:
