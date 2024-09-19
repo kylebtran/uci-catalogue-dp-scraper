@@ -4,10 +4,10 @@ from bs4 import BeautifulSoup
 
 import pandas as pd
 import datetime
+import requests
 
 
 from sample_dp_scrapers.types import Header, Course, YEAR_STANDINGS, TERMS
-from sample_dp_scrapers.utils import get_soup
 
 
 class Scraper:
@@ -122,6 +122,11 @@ class Scraper:
         ]
 
         return format_export(row_header, dfs).sort_values(by="CourseSequenceID")
+
+
+def get_soup(url: str) -> BeautifulSoup:
+    response: requests.Response = requests.get(url)
+    return BeautifulSoup(response.text, "html.parser")
 
 
 def get_df(soup: BeautifulSoup) -> pd.DataFrame:
