@@ -51,6 +51,7 @@ class Scraper:
             for p in paragraphs:
                 for keyword, var in [
                     ("Prerequisite:", "Prerequisites"),
+                    ("Prerequisite or corequisite:", "Prerequisites"),
                     ("Corequisite:", "Corequisites"),
                 ]:
                     if keyword in p.get_text():
@@ -110,9 +111,7 @@ class Scraper:
         )
 
     def scrape(self) -> pd.DataFrame:
-        if not self.url.endswith("#sampleprogramtext"):
-            self.url += "#sampleprogramtext"
-
+        mdfs = []
         soup = get_soup(self.url)
         row_header = get_header(soup)
         df = get_df(soup)
@@ -152,9 +151,11 @@ def get_df(soup: BeautifulSoup) -> pd.DataFrame:
 def get_header(soup: BeautifulSoup) -> NamedTuple:
     degree_plan_id = None
     institution = "University of California, Irvine"
-    academic_year = soup.find("span", id="edition").find("a").get_text().strip()[:7]
+    academic_year = soup.find("div", id="edition").get_text().strip()[:7]
     curriculum, degree_type = (
-        soup.find("main", id="contentarea").find("h1").get_text().rsplit(", ", 1)
+        # soup.find("h4", id="tglhead expand").get_text().rsplit(", ", 1)
+        "PLCHLDR1",
+        "PLCHLDR2",
     )
     degree_plan = "Catalogue Sample"
     degree_type = degree_type.replace(".", "")
