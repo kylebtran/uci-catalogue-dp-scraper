@@ -1,10 +1,11 @@
-from typing import NamedTuple, Optional
+from typing import Generator, NamedTuple, Optional
 from bs4 import BeautifulSoup
 
 
 import pandas as pd
 import datetime
 import requests
+import re
 
 
 from sample_dp_scrapers.types import Header, Course, YEAR_STANDINGS, TERMS
@@ -17,7 +18,12 @@ class Scraper:
         self.curr_term_number = 0
         self.course_id_map = {}
 
-    def get_class_info(self, info: Optional[str | dict], curr_url: str) -> list:
+    def reset(self) -> None:
+        self.curr_course_sequence_id = 0
+        self.curr_term_number = 0
+        self.course_id_map = {}
+
+    def get_class_info(self, info: Optional[str | dict]) -> list:
         if not info:
             return None
 
@@ -47,7 +53,11 @@ class Scraper:
             soup = get_soup(course_url)
 
             dr = {}
-            paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
+            try:
+                paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
+            except:
+                soup = get_soup(re.sub(r"\d{4}-\d{2}", "2019-20", course_url))
+                paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
             for p in paragraphs:
                 for keyword, var in [
                     ("Prerequisite:", "Prerequisites"),
@@ -63,11 +73,14 @@ class Scraper:
                             )
                         )
 
-            course_name, credit_hours = (
-                soup.find("div", class_="search-courseresult")
-                .find("h2")
-                .text.replace(f"{prefix}\xa0{number}.  ", "")
-            ).rsplit(".", 2)[:2]
+            try:
+                course_name, credit_hours = (
+                    soup.find("div", class_="searchresult")
+                    .find("h2")
+                    .text.replace(f"{prefix}\xa0{number}.  ", "")
+                ).rsplit(".", 2)[:2]
+            except:
+                course_name, credit_hours = "ERROR", "ERROR"
             prerequisites = ", ".join(
                 sorted(  # Sorted not working
                     str(self.course_id_map[prereq])
@@ -89,7 +102,7 @@ class Scraper:
         canonical_name = None
         term_number = self.curr_term_number
         strict_corequisites = None
-        plan_url = curr_url
+        plan_url = self.url
         notes = None
         extract_date = datetime.datetime.now(datetime.timezone.utc)
 
@@ -110,17 +123,24 @@ class Scraper:
             ExtractDate=extract_date,
         )
 
-    def scrape(self) -> pd.DataFrame:
-        mdfs = []
+    def scrape(self) -> list[pd.DataFrame]:
+        exports: list = []
         soup = get_soup(self.url)
-        row_header = get_header(soup)
-        df = get_df(soup)
-        dfs = [
-            df_each.map(lambda x: self.get_class_info(x, self.url))
-            for df_each in split_df(df)
-        ]
+        row_headers = get_headers(soup)
+        dfs = get_dfs(soup)
 
-        return format_export(row_header, dfs).sort_values(by="CourseSequenceID")
+        for row_header, df in zip(row_headers, dfs):
+            mdfs = [
+                df_each.map(lambda x: self.get_class_info(x))
+                for df_each in split_df(df)
+            ]
+            exports.append(
+                format_export(row_header, mdfs).sort_values(by="CourseSequenceID")
+            )
+
+            self.reset()
+
+        return exports
 
 
 def get_soup(url: str) -> BeautifulSoup:
@@ -128,51 +148,72 @@ def get_soup(url: str) -> BeautifulSoup:
     return BeautifulSoup(response.text, "html.parser")
 
 
-def get_df(soup: BeautifulSoup) -> pd.DataFrame:
-    data: list = []
+def get_dfs(soup: BeautifulSoup) -> list[pd.DataFrame]:
+    dfs: list[pd.DataFrame] = []
 
-    table = soup.find("table", class_="sc_plangrid")
-    for row in table.find_all("tr"):
-        row_data: list = []
+    tables = soup.find_all("table", class_="sc_plangrid")
+    for table in tables:
+        data = []
 
-        for cell in row.find_all(["td", "th"]):
-            anchor = cell.find("a")
-            if anchor:
-                row_data.append(
-                    {cell.text.strip().split(" ")[0].strip("*"): anchor.get("href")}
-                )
-            else:
-                row_data.append(cell.text.strip())
-        data.append(row_data)
+        for row in table.find_all("tr"):
+            row_data: list = []
 
-    return pd.DataFrame(data)
+            for cell in row.find_all(["td", "th"]):
+                anchor = cell.find("a")
+                if anchor:
+                    row_data.append(
+                        {cell.text.strip().split(" ")[0].strip("*"): anchor.get("href")}
+                    )
+                else:
+                    row_data.append(cell.text.strip())
+            data.append(row_data)
+
+        df = pd.DataFrame(data)
+        dfs.append(df)
+
+    return dfs
 
 
-def get_header(soup: BeautifulSoup) -> NamedTuple:
+def get_headers(soup: BeautifulSoup) -> list[Header]:
+    headers = []
+
     degree_plan_id = None
     institution = "University of California, Irvine"
-    academic_year = soup.find("div", id="edition").get_text().strip()[:7]
-    curriculum, degree_type = (
-        # soup.find("h4", id="tglhead expand").get_text().rsplit(", ", 1)
-        "PLCHLDR1",
-        "PLCHLDR2",
-    )
-    degree_plan = "Catalogue Sample"
-    degree_type = degree_type.replace(".", "")
-    curriculum = f"{degree_type} {curriculum}"
     system_type = "Quarter"
     cip = "26.0101"
-
-    return Header(
-        DegreePlanID=degree_plan_id,
-        Institution=institution,
-        AcademicYear=academic_year,
-        Curriculum=curriculum,
-        DegreePlan=degree_plan,
-        DegreeType=degree_type,
-        SystemType=system_type,
-        CIP=cip,
+    header_sections = soup.find_all(
+        ["h4", "h3"], string=lambda s: s and "Requirements for the" in s
     )
+
+    for header_section in header_sections:
+        if "Minor" in header_section.get_text():
+            continue
+
+        academic_year = soup.find("div", id="edition").get_text().strip()[:7]
+        degree_type, curriculum = header_section.get_text().rsplit(" in ", 1)
+        degree_plan = "Catalogue Sample"
+        degree_type = (
+            degree_type.replace(".", "")
+            .replace("Degree", "")
+            .replace("Requirements for the ", "")
+            .strip()
+        )
+        curriculum = f"{degree_type} {curriculum}"
+
+        header = Header(
+            DegreePlanID=degree_plan_id,
+            Institution=institution,
+            AcademicYear=academic_year,
+            Curriculum=curriculum,
+            DegreePlan=degree_plan,
+            DegreeType=degree_type,
+            SystemType=system_type,
+            CIP=cip,
+        )
+
+        headers.append(header)
+
+    return headers
 
 
 def split_df(df: pd.DataFrame) -> list[pd.DataFrame]:

@@ -2,5 +2,37 @@
 // Various degree plans have been added as a demo, but more can be found on https://catalogue.uci.edu.
 
 
+// Physical Sciences
+https://catalogue.uci.edu/previouseditions/2019-20/schoolofphysicalsciences/departmentofearthsystemscience/
+
+// Information and Computer Science
+https://catalogue.uci.edu/previouseditions/2019-20/donaldbrenschoolofinformationandcomputersciences/
+https://catalogue.uci.edu/previouseditions/2019-20/donaldbrenschoolofinformationandcomputersciences/departmentofcomputerscience/
+https://catalogue.uci.edu/previouseditions/2019-20/interdisciplinarystudies/computerscienceandengineering/
+https://catalogue.uci.edu/previouseditions/2019-20/donaldbrenschoolofinformationandcomputersciences/departmentofstatistics/
+https://catalogue.uci.edu/previouseditions/2019-20/donaldbrenschoolofinformationandcomputersciences/departmentofinformatics/
+https://catalogue.uci.edu/previouseditions/2019-20/donaldbrenschoolofinformationandcomputersciences/
+
 // Engineering
 https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofmechanicalandaerospaceengineering/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofbiomedicalengineering/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofchemicalandbiomolecularengineering/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofcivilandenvironmentalengineering/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofelectricalengineeringandcomputerscience/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/interdisciplinarystudies/computerscienceandengineering/
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofelectricalengineeringandcomputerscience/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/#genengr
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofcivilandenvironmentalengineering/#majorstext
+https://catalogue.uci.edu/previouseditions/2019-20/thehenrysamuelischoolofengineering/departmentofmaterialsscienceandengineering/#majortext
+https://catalogue.uci.edu/previouseditions/2019-20/donaldbrenschoolofinformationandcomputersciences/#undergraduatetext
+
+// Health and Medicine
+https://catalogue.uci.edu/previouseditions/2019-20/schoolofbiologicalsciences/#ExerciseSciences
+https://catalogue.uci.edu/previouseditions/2019-20/schoolofbiologicalsciences/#majortext
+https://catalogue.uci.edu/previouseditions/2019-20/schoolofbiologicalsciences/departmentofmolecularbiologyandbiochemistry/#majortext
+https://catalogue.uci.edu/previouseditions/2019-20/sueandbillgrossschoolofnursing/#undergraduatetext
+https://catalogue.uci.edu/previouseditions/2019-20/departmentofpharmaceuticalsciences/#undergraduatetext
+https://catalogue.uci.edu/previouseditions/2019-20/programinpublichealth/#undergraduatetext
+https://catalogue.uci.edu/previouseditions/2019-20/programinpublichealth/#undergraduatetext
+https://catalogue.uci.edu/previouseditions/2019-20/schoolofsocialecology/departmentofpsychologicalscience/#majortext
+https://catalogue.uci.edu/previouseditions/2019-20/schoolofsocialsciences/departmentofcognitivesciences/#majortext

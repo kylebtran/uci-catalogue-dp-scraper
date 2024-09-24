@@ -10,7 +10,7 @@ import os
 # 1. Search second layer course results by their h2 course name before reading paragraph details.
 
 
-YEARS = ["2019-20"]
+YEARS = ["2014-15", "2015-16", "2016-17", "2017-18", "2018-19", "2019-20"]
 
 
 def process_urls(file_path: str) -> list:

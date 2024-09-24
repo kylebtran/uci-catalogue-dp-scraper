@@ -17,7 +17,7 @@ class Scraper:
         self.curr_term_number = 0
         self.course_id_map = {}
 
-    def get_class_info(self, info: Optional[str | dict], curr_url: str) -> list:
+    def get_class_info(self, info: Optional[str | dict]) -> list:
         if not info:
             return None
 
@@ -88,7 +88,7 @@ class Scraper:
         canonical_name = None
         term_number = self.curr_term_number
         strict_corequisites = None
-        plan_url = curr_url
+        plan_url = self.url
         notes = None
         extract_date = datetime.datetime.now(datetime.timezone.utc)
 
@@ -110,9 +110,6 @@ class Scraper:
         )
 
     def scrape(self) -> pd.DataFrame:
-        if not self.url.endswith("#sampleprogramtext"):
-            self.url += "#sampleprogramtext"
-
         soup = get_soup(self.url)
         row_header = get_header(soup)
         df = get_df(soup)
@@ -149,7 +146,7 @@ def get_df(soup: BeautifulSoup) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def get_header(soup: BeautifulSoup) -> NamedTuple:
+def get_header(soup: BeautifulSoup) -> Header:
     degree_plan_id = None
     institution = "University of California, Irvine"
     academic_year = soup.find("span", id="edition").find("a").get_text().strip()[:7]
