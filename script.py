@@ -1,4 +1,4 @@
-from sample_dp_scrapers.sample_dp_scraper_2020_24 import Scraper
+from sample_dp_scrapers.sample_dp_scraper_2014_20 import Scraper
 from typing import Generator
 
 
@@ -10,7 +10,7 @@ import os
 # 1. Search second layer course results by their h2 course name before reading paragraph details.
 
 
-YEARS = ["2020-21", "2021-22", "2022-23", "2023-24"]
+YEARS = ["2014-15", "2015-16", "2016-17", "2017-18", "2018-19", "2019-20"]
 
 
 def process_urls(file_path: str) -> list:
@@ -36,17 +36,18 @@ def main():
     for idx, url in enumerate(apply_year_range(urls)):
         try:
             scraper = Scraper(url)
-            df: pd.DataFrame = scraper.scrape()
+            mdfs: list[pd.DataFrame] = scraper.scrape()
 
-            file_name: str = df.iloc[1, 3].split(" ", 1)[1].replace(" ", "_").replace(":", "").replace("/", "")
-            subdir_name: str = f"sample_dp_exports/{df.iloc[1, 2].replace(" ", "_")}"
+            for df in mdfs:
+                file_name: str = df.iloc[1, 3].split(" ", 1)[1].replace(" ", "_").replace(":", "").replace("/", "")
+                subdir_name: str = f"sample_dp_exports/{df.iloc[1, 2].replace(" ", "_")}"
 
-            os.makedirs(subdir_name, exist_ok=True)
+                os.makedirs(subdir_name, exist_ok=True)
 
-            df.to_csv(
-                os.path.join(subdir_name, f"UCI_DegreePlan_{file_name}.csv"),
-                index=False,
-            )
+                df.to_csv(
+                    os.path.join(subdir_name, f"UCI_DegreePlan_{file_name}.csv"),
+                    index=False,
+                )
 
             print(f"({idx + 1}/{len(urls * len(YEARS))}) Success")
 
