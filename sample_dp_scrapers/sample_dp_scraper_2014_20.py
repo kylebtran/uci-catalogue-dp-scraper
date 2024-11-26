@@ -47,7 +47,7 @@ class Scraper:
             course_url = None
 
         else:
-            course_url = "/".join(self.url.split("/")[:5]) + next(iter(info.values()))
+            course_url = "/".join(self.url.split("/")[:5]) + next(iter(info.values())).replace(" ", "%20")  # [Flag: course URL not working]
             prefix, number = next(iter(info.keys())).rsplit("\xa0", 1)
 
             soup = get_soup(course_url)
@@ -56,8 +56,11 @@ class Scraper:
             try:
                 paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
             except:
-                soup = get_soup(re.sub(r"\d{4}-\d{2}", "2019-20", course_url))
-                paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
+                try:
+                    soup = get_soup(re.sub(r"\d{4}-\d{2}", "2019-20", course_url))
+                    paragraphs = soup.find("div", class_="courseblockdesc").find_all("p")
+                except:
+                    paragraphs = []
             for p in paragraphs:
                 for keyword, var in [
                     ("Prerequisite:", "Prerequisites"),
@@ -190,7 +193,7 @@ def get_headers(soup: BeautifulSoup) -> list[Header]:
             continue
 
         academic_year = soup.find("div", id="edition").get_text().strip()[:7]
-        degree_type, curriculum = header_section.get_text().rsplit(" in ", 1)
+        degree_type, curriculum = header_section.get_text().replace("\xa0", " ").rsplit(" in ", 1)
         degree_plan = "Catalogue Sample"
         degree_type = (
             degree_type.replace(".", "")
